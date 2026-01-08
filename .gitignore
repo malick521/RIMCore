@@ -1,0 +1,12 @@
+# Backend PHP
+backend/vendor/
+backend/.env
+backend/*.log
+
+# Frontend (sécurité supplémentaire)
+frontend/.env.local
+
+# OS / IDE
+.vscode/
+.idea/
+.DS_Store
