@@ -121,9 +121,3 @@ echo json_encode([
 
 
 
-
-
-
-
-
-

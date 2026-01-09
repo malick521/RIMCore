@@ -14,7 +14,7 @@ export function getHeaderData() : HeaderItem[] {
 
   if (user.role === "etudiant") return menuDataStudent;
   if (user.role === "employe") return menuDataEmploye;
-  if (user.role === "administrateur") return menuDataAdmin;
+  if (user.role === "admin") return menuDataAdmin;
 
   return [];
 }

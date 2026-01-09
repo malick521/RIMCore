@@ -1,6 +1,6 @@
 <?php
 $servername= "localhost";
-$dbname = "database_rimcore";
+$dbname = "rimcore";
 $username = "root";
 $password = "";
 
