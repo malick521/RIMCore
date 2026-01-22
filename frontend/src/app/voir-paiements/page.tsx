@@ -35,13 +35,8 @@ export default function VoirPaiement() {
             });
     }, []);
 
-    if (loading) return <div>Chargement...</div>;
-    
-    if (paiements.length === 0)
-        return 
-                <div className='flex justify-center items-center min-h-screen'>
-                    <h1 className='text-center text-3xl font-bold'>Aucun Paiement pour le moment.</h1>
-                 </div>;
+    if (loading) return (<div className="flex justify-center items-center min-h-screen font-bold text-3xl">Chargement...</div>);
+    if (paiements.length === 0) return <div className="flex justify-center items-center min-h-screen font-bold text-3xl">Aucun Paiement pour le moment.</div>;
 
     return (
         <>

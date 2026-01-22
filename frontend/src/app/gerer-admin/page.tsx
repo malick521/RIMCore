@@ -92,8 +92,8 @@ export default function TableEmployes() {
 
 // Lorsque le modal s'ouvre, on charge les données actuelles dans le formulaire
 
-    if (loading) return <div>Chargement...</div>;
-    if (admins.length === 0) return <div>Aucun Admin pour le moment.</div>;
+   if (loading) return (<div className="flex justify-center items-center min-h-screen font-bold text-3xl">Chargement...</div>);
+    if (admins.length === 0) return <div className="flex justify-center items-center min-h-screen font-bold text-3xl">Aucun Admin pour le moment.</div>;
 
     return (
         <>

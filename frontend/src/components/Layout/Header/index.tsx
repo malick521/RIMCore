@@ -30,7 +30,7 @@ const Header: React.FC = () => {
             // Déterminer le menu selon le rôle
             if (userObj.role === "etudiant") setMenuItems(menuDataStudent);
             else if (userObj.role === "employe") setMenuItems(menuDataEmploye);
-            else if (userObj.role === "administrateur") setMenuItems(menuDataAdmin);
+            else if (userObj.role === "admin") setMenuItems(menuDataAdmin);
         }
     }, []);
 

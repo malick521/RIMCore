@@ -91,8 +91,64 @@ export default function TableEmployes() {
             });
     }, []);
 
-    if (loading) return <div>Chargement...</div>;
-    if (employes.length === 0) return <div>Aucun Employé pour le moment.</div>;
+    if (loading) return (<div className="flex justify-center items-center min-h-screen font-bold text-3xl">Chargement...</div>);
+
+    if (employes.length === 0) return (
+    <div className="flex flex-col justify-center items-center min-h-screen">
+         <Button onClick={() => { setModalType("personal"); setOpenModal(true); }} className="bg-primary shadow-lg rounded-full p-6 mb-10">
+                                        Ajoutez un Employé
+            </Button>
+
+            <p className="mt-5 text-lg text-gray-600">Aucun Employé pour le moment.</p>
+
+            <Dialog open={openModal} onOpenChange={setOpenModal}>
+                        <DialogContent className="max-w-2xl">
+                            <DialogHeader>
+                            <DialogTitle className="mb-4">
+                                {modalType === "personal" ? "Inscription " : "Not important"}
+                            </DialogTitle>
+                            </DialogHeader>
+
+                    {modalType === "personal" ? (
+                            <>
+                                <form onSubmit={handleSubmit}>
+                                    <h2 className="text-2xl text-center font-semibold mb-5">Créer votre compte </h2>
+                                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="prenom" placeholder="Prénom" />
+                                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="nom" placeholder="Nom" />
+                                    <input type="email" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="email" placeholder="Email" />
+                                    <input type="password" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="password" placeholder="Mot de passe" />
+                                    <button className="cursor-pointer bg-primary text-white p-3 rounded-lg">S'inscrire {loading && <Loader />}</button>
+                                </form> 
+                                <p className="text-body-secondary mt-7 mb-4 text-black text-base">
+                                        En créant un compte, vous acceptez notre{" "}
+                                        <a href="#!" className="text-primary hover:underline">
+                                            Politique {" "}
+                                        </a>
+                                        de{" "}
+                                        <a href="#!" className="text-primary hover:underline">
+                                            confidentialité.
+                                        </a>
+                                </p>       
+                            </>
+
+                    ) : (
+                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                    
+                    </div>
+                    )}
+
+                    <DialogFooter className="flex gap-2 mt-4">
+                    <Button
+                        color="lighterror"
+                        className="rounded-md bg-lighterror dark:bg-darkerror text-error hover:bg-error hover:text-white"
+                        onClick={() => setOpenModal(false)}
+                    >
+                        Fermer
+                    </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+    </div>);
 
     return (
         <>
