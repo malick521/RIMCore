@@ -18,6 +18,6 @@ try {
 } catch (PDOException $e) {
     // En cas d'erreur de connexion
     http_response_code(500);
-    echo json_encode(["message" => "Erreur de connexion à la base : " . $e->getMessage()]);
+    echo json_encode(["message" => "Erreur de connexion a la base : " . $e->getMessage()]);
     exit;
 }

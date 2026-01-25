@@ -41,11 +41,12 @@ const SignUp = () => {
             }
 
             toast.success("Compte créé avec succès !");
-            // router.push("/signin");
+            //router.push("/signin");
         } 
         
         catch (error) {
-            toast.error("Erreur serveur");
+            console.error("FETCH ERROR :", error);
+            toast.error("Erreur serveur z");
         } 
         
         finally {

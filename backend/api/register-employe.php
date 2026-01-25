@@ -61,7 +61,7 @@ if ($admin) {
     exit;
 }
 
-$stmt = $pdo->prepare("SELECT id_etudiant, nom, prenom, email, mot_de_passe FROM etdiant WHERE email = ?");
+$stmt = $pdo->prepare("SELECT id_etudiant, nom, prenom, email, mot_de_passe FROM etudiant WHERE email = ?");
 $stmt->execute([$email]);
 $etudiant = $stmt->fetch(PDO::FETCH_ASSOC);
 
