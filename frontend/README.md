@@ -1,41 +1,16 @@
-# Paidin - Free NextJs Landing Page Template with App Directory Routing
-#### Preview
-
- - [Demo](https://themewagon.github.io/paidin/)
-
-#### Download
- - [Download from ThemeWagon](https://themewagon.com/themes/paidin/)
-
-## Getting Started
-
-1. Clone Repository
-```
-git clone https://github.com/themewagon/paidin.git
-```
-2. Install Dependencies
-```
-npm i
-```
-3. Run the development server:
-
-```bash
+Guide d’installation et de lancement du projet
+Étape 1 : Placez-vous dans le dossier où vous souhaitez cloner le projet. Faites un clic droit, ouvrez Git Bash, puis exécutez la commande suivante :
+git clone https://github.com/malick521/RIMCore.git
+Étape 2 : Une fois le clonage terminé, ouvrez le projet dans Visual Studio Code :
+code .
+Étape 3 : Dans le terminal de VS Code, accédez au dossier frontend et installez les dépendances :
+cd frontend
+npm install
+Étape 4 : Toujours dans le dossier frontend, lancez le serveur de développement :
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-## Author 
-```
-Design and code is completely written by GetNextJs Templates and development team. 
-```
-
-## License
-
- - Design and Code is Copyright &copy; [GetNextJs Templates](https://getnextjstemplates.com/)
- - Licensed cover under [MIT]
- - Distributed by [ThemeWagon](https://themewagon.com)
-
+Étape 5 : Ouvrez un nouveau terminal dans VS Code, accédez au dossier backend et démarrez le serveur PHP :
+cd backend
+php -S localhost:8000
+Étape 6 : Vérifiez que la base de données partagée a bien été importée et que XAMPP ou WAMP est démarré.
+Étape 7 : Ouvrez votre navigateur et accédez à l’adresse suivante :
+http://localhost:3000
