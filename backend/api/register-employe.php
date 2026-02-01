@@ -32,6 +32,7 @@ $prenom = trim($data['prenom']);
 $nom = trim($data['nom']);
 $email = trim($data['email']);
 $password = $data['password'];
+$identifiant_admin = $data['id'];
 
 // Validation email
 if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -79,10 +80,10 @@ $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 // Mise à jour
 try {
     $stmt = $pdo->prepare("
-       INSERT INTO employe(nom, prenom, email, mot_de_passe)
-        values(?,?,?,?)
+       INSERT INTO employe(nom, prenom, email, mot_de_passe, admin_id)
+        values(?,?,?,?,?)
     ");
-    $stmt->execute([$nom, $prenom, $email, $hashedPassword]);
+    $stmt->execute([$nom, $prenom, $email, $hashedPassword, $identifiant_admin]);
 } catch (PDOException $e) {
     http_response_code(500);
     echo json_encode(["message" => "Erreur serveur : " . $e->getMessage()]);
@@ -92,3 +93,6 @@ try {
 // Succès
 http_response_code(200);
 echo json_encode(["message" => "Inscription réussie"]);
+
+
+echo $data;

@@ -46,7 +46,7 @@ const SignUp = () => {
         
         catch (error) {
             console.error("FETCH ERROR :", error);
-            toast.error("Erreur serveur z");
+            toast.error("Erreur serveur");
         } 
         
         finally {

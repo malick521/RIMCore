@@ -19,6 +19,7 @@ type Employe = {
     nom: string;
     role: string;
     date_ajout: string;
+    Admin_Id: number;
 };
 
 export default function TableEmployes() {
@@ -35,6 +36,13 @@ export default function TableEmployes() {
 
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData.entries());
+      
+        const userStr = localStorage.getItem("user");
+
+        if (userStr) {
+            const user = JSON.parse(userStr);
+            data.id = user.id;
+        }
 
         if (!data.nom || !data.prenom || !data.email || !data.password) {
             toast.error("Tous les champs sont obligatoires");
@@ -184,6 +192,7 @@ export default function TableEmployes() {
                         <th className="px-6 py-3 font-semibold">Nom</th>
                         <th className="px-6 py-3 font-semibold">Role</th>
                         <th className="px-6 py-3 font-semibold">Date Ajout</th>
+                        <th className="px-6 py-3 font-semibold">Ajoutez par</th>
                         <th className="px-6 py-3 font-semibold">Action</th>
                     </tr>
                 </thead>
@@ -200,6 +209,7 @@ export default function TableEmployes() {
                             <td className="px-6 py-4">{employe.nom}</td>
                             <td className="px-6 py-4">{employe.role}</td>
                             <td className="px-6 py-4">{employe.date_ajout}</td>
+                            <td className="px-6 py-4">{employe.Admin_Id}</td>
                             <td className="px-6 py-4">
                                 <a href="#" className="font-medium text-danger hover:underline">Supprimer</a>
                             </td>
