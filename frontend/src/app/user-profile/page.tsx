@@ -1,6 +1,5 @@
 "use client";
 
-import { useSearchParams } from "next/navigation"
 import Image from "next/image"
 import CardBox from "../../components/Home/shared/CardBox"
 import { useState, useEffect } from "react";
@@ -25,7 +24,7 @@ const UserProfile = () => {
 
     return (
         <>
-            <div className="flex flex-col gap-6 mt-30">
+            <div className="flex flex-col min-h-screen gap-6 mt-30">
                 <CardBox className="p-6 bg-background overflow-hidden border-none rounded-xl shadow-xs">
                     <div className="flex flex-col sm:flex-row items-center gap-6 rounded-xl relative w-full words-break">
                         <div>

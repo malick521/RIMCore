@@ -1,274 +1,246 @@
 "use client";
-import { useEffect } from "react";
-import Link from "next/link";
+
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { useState } from "react";
 import Loader from "@/components/Common/Loader";
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogFooter,
-} from "@/app/components/ui/dialog"
 import { Button } from "@/app/components/ui/button";
+import {
+  Dialog,
+  DialogBackdrop,
+  DialogPanel,
+  DialogTitle,
+} from "@headlessui/react";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 type Employe = {
-    id_employe: number;
-    prenom: string;
-    nom: string;
-    role: string;
-    date_ajout: string;
-    Admin_Id: number;
+  id_employe: number;
+  prenom: string;
+  nom: string;
+  role: string;
+  date_ajout: string;
+  Admin_Id: number;
 };
 
 export default function TableEmployes() {
-    const [employes, setEmployes] = useState<Employe[]>([]);
-    const [openModal, setOpenModal] = useState(false);
-    const [modalType, setModalType] = useState<"personal" | null>(null);
+  const [employes, setEmployes] = useState<Employe[]>([]);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openDelete, setOpenDelete] = useState(false);
+  const [loading, setLoading] = useState(true);
 
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setLoading(true);
 
-    const [loading, setLoading] = useState(true);
+    const formData = new FormData(e.currentTarget);
+    const data: any = Object.fromEntries(formData.entries());
 
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
+    const userStr = localStorage.getItem("user");
+    if (userStr) {
+      const user = JSON.parse(userStr);
+      data.id = user.id;
+    }
 
-        const formData = new FormData(e.currentTarget);
-        const data = Object.fromEntries(formData.entries());
-      
-        const userStr = localStorage.getItem("user");
+    if (!data.nom || !data.prenom || !data.email || !data.password) {
+      toast.error("Tous les champs sont obligatoires");
+      setLoading(false);
+      return;
+    }
 
-        if (userStr) {
-            const user = JSON.parse(userStr);
-            data.id = user.id;
+    try {
+      const res = await fetch(
+        "http://localhost:8000/api/register-employe.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
         }
+      );
 
-        if (!data.nom || !data.prenom || !data.email || !data.password) {
-            toast.error("Tous les champs sont obligatoires");
-            setLoading(false);
-            return;
-        }
+      const result = await res.json();
 
-        try {
-            const res = await fetch("http://localhost:8000/api/register-employe.php", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-                });
+      if (!res.ok) {
+        toast.error(result.message || "Inscription refusée");
+        return;
+      }
 
-            const result = await res.json();
+      toast.success("Compte créé avec succès !");
+      setOpenAdd(false);
+    } catch (error) {
+      toast.error("Erreur serveur");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            if (!res.ok) {
-            toast.error(result.message || "Inscription refusée");
-            setLoading(false);
-            return;
-            }
+  useEffect(() => {
+    const userStr = localStorage.getItem("user");
+    if (!userStr) return;
 
-            toast.success("Compte créé avec succès !");
-            // router.push("/signin");
-        } 
-        
-        catch (error) {
-            toast.error("Erreur serveur");
-        } 
-        
-        finally {
-            setLoading(false);
-        }
-};
+    const user = JSON.parse(userStr);
 
+    fetch(`http://localhost:8000/api/employes.php?id_admin=${user.id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        setEmployes(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
-
-
-
-    useEffect(() => {
-        const userStr = localStorage.getItem("user");
-        if (!userStr) return;
-        const user = JSON.parse(userStr);
-
-        fetch(`http://localhost:8000/api/employes.php?id_admin=${user.id}`)
-            .then(res => res.json())
-            .then(data => {
-                setEmployes(Array.isArray(data) ? data : []);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error(err);
-                setLoading(false);
-            });
-    }, []);
-
-    if (loading) return (<div className="flex justify-center items-center min-h-screen font-bold text-3xl">Chargement...</div>);
-
-    if (employes.length === 0) return (
-    <div className="flex flex-col justify-center items-center min-h-screen">
-         <Button onClick={() => { setModalType("personal"); setOpenModal(true); }} className="bg-primary shadow-lg rounded-full p-6 mb-10">
-                                        Ajoutez un Employé
-            </Button>
-
-            <p className="mt-5 text-lg text-gray-600">Aucun Employé pour le moment.</p>
-
-            <Dialog open={openModal} onOpenChange={setOpenModal}>
-                        <DialogContent className="max-w-2xl">
-                            <DialogHeader>
-                            <DialogTitle className="mb-4">
-                                {modalType === "personal" ? "Inscription " : "Not important"}
-                            </DialogTitle>
-                            </DialogHeader>
-
-                    {modalType === "personal" ? (
-                            <>
-                                <form onSubmit={handleSubmit}>
-                                    <h2 className="text-2xl text-center font-semibold mb-5">Créer votre compte </h2>
-                                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="prenom" placeholder="Prénom" />
-                                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="nom" placeholder="Nom" />
-                                    <input type="email" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="email" placeholder="Email" />
-                                    <input type="password" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="password" placeholder="Mot de passe" />
-                                    <button className="cursor-pointer bg-primary text-white p-3 rounded-lg">S'inscrire {loading && <Loader />}</button>
-                                </form> 
-                                <p className="text-body-secondary mt-7 mb-4 text-black text-base">
-                                        En créant un compte, vous acceptez notre{" "}
-                                        <a href="#!" className="text-primary hover:underline">
-                                            Politique {" "}
-                                        </a>
-                                        de{" "}
-                                        <a href="#!" className="text-primary hover:underline">
-                                            confidentialité.
-                                        </a>
-                                </p>       
-                            </>
-
-                    ) : (
-                    <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                    
-                    </div>
-                    )}
-
-                    <DialogFooter className="flex gap-2 mt-4">
-                    <Button
-                        color="lighterror"
-                        className="rounded-md bg-lighterror dark:bg-darkerror text-error hover:bg-error hover:text-white"
-                        onClick={() => setOpenModal(false)}
-                    >
-                        Fermer
-                    </Button>
-                    </DialogFooter>
-                </DialogContent>
-            </Dialog>
-    </div>);
-
+  if (loading)
     return (
-        <>
-        <div className="min-h-screen m-30">
-        <h1 className="text-3xl text-center font-semibold mb-7">Gestion des Employés : </h1>
-         <Button onClick={() => { setModalType("personal"); setOpenModal(true); }} className="flex items-center bg-primary gap-1.5 shadow-lg rounded-lg p-3 mb-10">
-                                        Ajoutez un Employé
+      <div className="flex justify-center items-center min-h-screen text-3xl">
+        Chargement...
+      </div>
+    );
+
+  return (
+    <>
+      <div className="min-h-screen m-30">
+        <h1 className="text-3xl text-center font-semibold mb-7">
+          Gestion des Employés
+        </h1>
+
+        <Button
+          onClick={() => setOpenAdd(true)}
+          className="bg-primary shadow-lg rounded-lg p-3 mb-10"
+        >
+          Ajouter un Employé
         </Button>
-        <div className="relative overflow-x-auto bg-neutral-primary-soft rounded-lg shadow-2xl border border-default">
-            <div className="p-4 flex items-center justify-between space-x-4">
-                <label htmlFor="input-group-1" className="sr-only">Rechercher</label>
-                <div className="flex flex-row justify-between relative ">
-                    <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg className="w-4 h-4 text-body" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" strokeLinecap="round" strokeWidth="2" d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"/>
-                        </svg>
-                    </div>
-                    <input type="text" id="input-group-1" className="block w-full max-w-96 ps-9 pe-3 py-2 bg-neutral-secondary-medium border border-default-medium text-heading text-sm rounded-base focus:ring-brand focus:border-brand shadow-xs placeholder:text-body" placeholder="Rechercher" />
-                </div>
+
+        <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
+          <table className="w-full text-sm text-left border-collapse">
+    <thead className="border-b hidden md:table-header-group">
+      <tr>
+        <th className="px-6 py-3">ID</th>
+        <th className="px-6 py-3">Prénom</th>
+        <th className="px-6 py-3">Nom</th>
+        <th className="px-6 py-3">Role</th>
+        <th className="px-6 py-3">Date</th>
+        <th className="px-6 py-3">Admin</th>
+        <th className="px-6 py-3">Action</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {employes.map((emp) => (
+        <tr
+          key={emp.id_employe}
+          className="border-b block md:table-row mb-4 md:mb-0"
+        >
+          <td data-label="ID" className="px-6 py-4 block md:table-cell">
+            {emp.id_employe}
+          </td>
+
+          <td data-label="Prénom" className="px-6 py-4 block md:table-cell">
+            {emp.prenom}
+          </td>
+
+          <td data-label="Nom" className="px-6 py-4 block md:table-cell">
+            {emp.nom}
+          </td>
+
+          <td data-label="Role" className="px-6 py-4 block md:table-cell">
+            {emp.role}
+          </td>
+
+          <td data-label="Date" className="px-6 py-4 block md:table-cell">
+            {emp.date_ajout}
+          </td>
+
+          <td data-label="Admin" className="px-6 py-4 block md:table-cell">
+            {emp.Admin_Id}
+          </td>
+
+          <td data-label="Action" className="px-6 py-4 block md:table-cell">
+            <Button
+              onClick={() => setOpenDelete(true)}
+              className="bg-red-500 text-white"
+            >
+              Supprimer
+            </Button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* MODAL AJOUT EMPLOYE */}
+      <Dialog open={openAdd} onClose={setOpenAdd} className="relative z-10">
+        <DialogBackdrop className="fixed inset-0 bg-black/40" />
+
+        <div className="fixed inset-0 flex items-center justify-center">
+          <DialogPanel className="bg-white rounded-lg p-6 max-w-lg w-full">
+            <DialogTitle className="text-xl font-semibold mb-4">
+              Creation d'un compte employé
+            </DialogTitle>
+
+            <form onSubmit={handleSubmit}>
+              <input
+                name="prenom"
+                placeholder="Prénom"
+                className="w-full border p-2 mb-3"
+              />
+              <input
+                name="nom"
+                placeholder="Nom"
+                className="w-full border p-2 mb-3"
+              />
+              <input
+                name="email"
+                placeholder="Email"
+                className="w-full border p-2 mb-3"
+              />
+              <input
+                name="password"
+                type="password"
+                placeholder="Mot de passe"
+                className="w-full border p-2 mb-3"
+              />
+
+              <Button className="w-full">
+                Créer {loading && <Loader />}
+              </Button>
+            </form>
+          </DialogPanel>
+        </div>
+      </Dialog>
+
+      {/* MODAL SUPPRESSION */}
+      <Dialog open={openDelete} onClose={setOpenDelete} className="relative z-10">
+        <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
+
+        <div className="fixed inset-0 flex items-center justify-center">
+          <DialogPanel className="bg-gray-800 rounded-lg p-6 max-w-lg w-full text-white">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
+                <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+              </div>
+
+              <DialogTitle className="text-lg font-semibold">
+                Supprimer cet employé ?
+              </DialogTitle>
             </div>
 
-            <table className="w-full text-sm text-left text-body">
-                <thead className="text-sm text-body bg-neutral-secondary-medium border-b border-default-medium">
-                    <tr>
-                        <th scope="col" className="p-4">
-                            <div className="flex items-center">
-                                <input id="table-checkbox" type="checkbox" className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" />
-                                <label htmlFor="table-checkbox" className="sr-only">Table checkbox</label>
-                            </div>
-                        </th>
-                        <th className="px-6 py-3 font-semibold">ID</th>
-                        <th className="px-6 py-3 font-semibold">Prénom</th>
-                        <th className="px-6 py-3 font-semibold">Nom</th>
-                        <th className="px-6 py-3 font-semibold">Role</th>
-                        <th className="px-6 py-3 font-semibold">Date Ajout</th>
-                        <th className="px-6 py-3 font-semibold">Ajoutez par</th>
-                        <th className="px-6 py-3 font-semibold">Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {employes.map((employe) => (
-                        <tr key={employe.id_employe} className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
-                            <td className="w-4 p-4">
-                                <div className="flex items-center">
-                                    <input type="checkbox" className="w-4 h-4 border border-default-medium rounded-xs bg-neutral-secondary-medium focus:ring-2 focus:ring-brand-soft" />
-                                </div>
-                            </td>
-                            <td className="px-6 py-4 font-medium">{employe.id_employe}</td>
-                            <td className="px-6 py-4 font-medium">{employe.prenom}</td>
-                            <td className="px-6 py-4">{employe.nom}</td>
-                            <td className="px-6 py-4">{employe.role}</td>
-                            <td className="px-6 py-4">{employe.date_ajout}</td>
-                            <td className="px-6 py-4">{employe.Admin_Id}</td>
-                            <td className="px-6 py-4">
-                                <a href="#" className="font-medium text-danger hover:underline">Supprimer</a>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            <p className="mt-3 text-gray-400">
+              Cette action est définitive.
+            </p>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <Button onClick={() => setOpenDelete(false)}>Annuler</Button>
+
+              <Button
+                className="bg-red-500 text-white"
+                onClick={() => setOpenDelete(false)}
+              >
+                Supprimer
+              </Button>
+            </div>
+          </DialogPanel>
         </div>
-    </div>
-
-
-    
-    <Dialog open={openModal} onOpenChange={setOpenModal}>
-        <DialogContent className="max-w-2xl">
-            <DialogHeader>
-            <DialogTitle className="mb-4">
-                {modalType === "personal" ? "Inscription " : "Not important"}
-            </DialogTitle>
-            </DialogHeader>
-
-    {modalType === "personal" ? (
-            <>
-                <form onSubmit={handleSubmit}>
-                    <h2 className="text-2xl text-center font-semibold mb-5">Créer votre compte </h2>
-                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="prenom" placeholder="Prénom" />
-                    <input type="text" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="nom" placeholder="Nom" />
-                    <input type="email" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="email" placeholder="Email" />
-                    <input type="password" className="w-full mb-3 border border-gray-950 p-2 rounded-lg" name="password" placeholder="Mot de passe" />
-                    <button className="cursor-pointer bg-primary text-white p-3 rounded-lg">S'inscrire {loading && <Loader />}</button>
-                </form> 
-                 <p className="text-body-secondary mt-7 mb-4 text-black text-base">
-                        En créant un compte, vous acceptez notre{" "}
-                        <a href="#!" className="text-primary hover:underline">
-                            Politique {" "}
-                        </a>
-                        de{" "}
-                        <a href="#!" className="text-primary hover:underline">
-                            confidentialité.
-                        </a>
-                  </p>       
-            </>
-
-    ) : (
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-       
-      </div>
-    )}
-
-    <DialogFooter className="flex gap-2 mt-4">
-      <Button
-        color="lighterror"
-        className="rounded-md bg-lighterror dark:bg-darkerror text-error hover:bg-error hover:text-white"
-        onClick={() => setOpenModal(false)}
-      >
-        Fermer
-      </Button>
-    </DialogFooter>
-  </DialogContent>
-    </Dialog>
+      </Dialog>
     </>
-    );
+  );
 }

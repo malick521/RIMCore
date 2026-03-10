@@ -99,10 +99,10 @@ const Header: React.FC = () => {
                         <button  
                                  className='hidden lg:block cursor-pointer bg-primary text-white hover:bg-transparent hover:text-primary border border-primary px-12 py-5 rounded-full font-medium text-xl'
                                  onClick={() => {
-                                            const user = localStorage.getItem("user");
+                                            const user = localStorage.getItem("user")
                                             if (user) {
                                                 localStorage.removeItem("user");
-                                                window.location.href = "http://localhost:3000";
+                                                window.location.href = "http://localhost:3000"
                                             } 
                                 }}>
                                     
@@ -195,7 +195,7 @@ const Header: React.FC = () => {
                             <span className='block w-6 h-0.5 bg-black mt-1.5'></span>
                         </button>
                     </div>
-                </div>)};
+                </div>)}
 
 
 
@@ -280,7 +280,7 @@ const Header: React.FC = () => {
                             </Link>
                         </div>
                     </nav>
-                </div>)};
+                </div>)}
             </div>
         </header>
     )
