@@ -34,6 +34,7 @@ export default function TableAdmins() {
   // Ajouter Admin
   // =========================
 
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -72,6 +73,43 @@ export default function TableAdmins() {
   };
 
   // =========================
+  // Suppression Admin
+  // =========================
+
+  const deleteAdmin = async (id: number) => {
+      setLoading(true);
+  
+      try {
+        const res = await fetch(
+          "http://localhost:8000/api/delete-admin.php",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({id}),
+          }
+        );
+  
+        const result = await res.json();
+  
+        if (!res.ok) {
+          toast.error(result.message || "Suppression refusée");
+          return;
+        }
+  
+        toast.success("Admin supprimé avec succès !");
+        setAdmins((prev) => prev.filter((adm) => adm.id_admin !== id));
+        setOpenDelete(false);
+        setSelectedAdmin(null);
+  
+      } catch (error) {
+        toast.error("Erreur serveur");
+        setOpenDelete(false);
+      } finally {
+        setLoading(false);
+      }
+  };
+
+  // =========================
   // Charger admins
   // =========================
 
@@ -104,34 +142,6 @@ export default function TableAdmins() {
   // Supprimer admin
   // =========================
 
-  const handleDelete = async () => {
-    if (!selectedAdmin) return;
-
-    try {
-      const res = await fetch(
-        `http://localhost:8000/api/delete-admin.php?id=${selectedAdmin}`,
-        { method: "DELETE" }
-      );
-
-      const result = await res.json();
-
-      if (!res.ok) {
-        toast.error(result.message || "Suppression impossible");
-        return;
-      }
-
-      toast.success("Admin supprimé");
-
-      setAdmins((prev) =>
-        prev.filter((admin) => admin.id_admin !== selectedAdmin)
-      );
-
-      setOpenDelete(false);
-    } catch {
-      toast.error("Erreur serveur");
-    }
-  };
-
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-screen text-3xl">
@@ -141,6 +151,7 @@ export default function TableAdmins() {
 
   return (
     <>
+      {/* TABLE DES ADMINS */}
       <div className="min-h-screen m-30">
         <h1 className="text-3xl text-center font-semibold mb-7">
           Gestion des Administrateurs
@@ -153,9 +164,9 @@ export default function TableAdmins() {
           Ajouter un Admin
         </Button>
 
-        <div className="overflow-x-auto rounded-lg shadow-2xl border">
+       <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
           <table className="w-full text-sm text-left">
-            <thead className="border-b">
+             <thead className="border-b hidden md:table-header-group">
               <tr>
                 <th className="px-6 py-3">ID</th>
                 <th className="px-6 py-3">Prénom</th>
@@ -169,16 +180,16 @@ export default function TableAdmins() {
 
             <tbody>
               {admins.map((admin) => (
-                <tr key={admin.id_admin} className="border-b">
-                  <td className="px-6 py-4">{admin.id_admin}</td>
-                  <td className="px-6 py-4">{admin.prenom}</td>
-                  <td className="px-6 py-4">{admin.nom}</td>
-                  <td className="px-6 py-4">{admin.email}</td>
-                  <td className="px-6 py-4">{admin.role}</td>
-                  <td className="px-6 py-4">{admin.date_ajout}</td>
+                <tr key={admin.id_admin}  className="border-b block md:table-row mb-4 md:mb-0">
+                  <td data-label="ID" className="px-6 py-4 block md:table-cell">{admin.id_admin}</td>
+                  <td data-label="Prenom" className="px-6 py-4 block md:table-cell">{admin.prenom}</td>
+                  <td data-label="Nom" className="px-6 py-4 block md:table-cell">{admin.nom}</td>
+                  <td data-label="Email" className="px-6 py-4 block md:table-cell">{admin.email}</td>
+                  <td data-label="Role" className="px-6 py-4 block md:table-cell">{admin.role}</td>
+                  <td data-label="Dajeajout" className="px-6 py-4 block md:table-cell">{admin.date_ajout}</td>
 
-                  <td className="flex gap-3 px-6 py-4">
-                      {currentAdmin === 1 && (
+                  <td className="px-6 py-4 block md:table-cell">
+                      {(currentAdmin === 1 && admin.id_admin != 1) &&(
                           <Button
                             variant="destructive"
                             className="bg-red-500 text-white"
@@ -202,60 +213,60 @@ export default function TableAdmins() {
       MODAL AJOUT ADMIN
       ========================= */}
 
-    <Dialog open={openAddModal} onClose={setOpenAddModal} className="relative z-10">
-        <DialogBackdrop className="fixed inset-0 bg-black/40" />
+      <Dialog open={openAddModal} onClose={setOpenAddModal} className="relative z-10">
+          <DialogBackdrop className="fixed inset-0 bg-black/40" />
 
-        <div className="fixed inset-0 flex items-center justify-center">
-          <DialogPanel className="bg-white rounded-lg p-6 max-w-lg w-full">
-            <DialogTitle className="text-xl font-semibold mb-4">
-              Creation d'un compte Administrateur
-            </DialogTitle>
+          <div className="fixed inset-0 flex items-center justify-center">
+            <DialogPanel className="bg-white rounded-lg p-6 max-w-lg w-full">
+              <DialogTitle className="text-xl font-semibold mb-4">
+                Creation d'un compte Administrateur
+              </DialogTitle>
 
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="prenom"
-              placeholder="Prénom"
-              className="w-full border p-2 rounded mb-3"
-            />
+            <form onSubmit={handleSubmit}>
+              <input
+                type="text"
+                name="prenom"
+                placeholder="Prénom"
+                className="w-full border p-2 rounded mb-3"
+              />
 
-            <input
-              type="text"
-              name="nom"
-              placeholder="Nom"
-              className="w-full border p-2 rounded mb-3"
-            />
+              <input
+                type="text"
+                name="nom"
+                placeholder="Nom"
+                className="w-full border p-2 rounded mb-3"
+              />
 
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              className="w-full border p-2 rounded mb-3"
-            />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                className="w-full border p-2 rounded mb-3"
+              />
 
-            <input
-              type="password"
-              name="password"
-              placeholder="Mot de passe"
-              className="w-full border p-2 rounded mb-3"
-            />
+              <input
+                type="password"
+                name="password"
+                placeholder="Mot de passe"
+                className="w-full border p-2 rounded mb-3"
+              />
 
-            <Button className="w-full">
-              Créer {loading && <Loader />}
-            </Button>
-          </form>
+              <Button className="w-full">
+                Créer {loading && <Loader />}
+              </Button>
+            </form>
 
-            </DialogPanel>
-        </div>
-     
-        
+              </DialogPanel>
+          </div>
+      
+          
       </Dialog>
 
       {/* =========================
       MODAL SUPPRESSION ADMIN
       ========================= */}
 
-    <Dialog open={openDelete} onClose={setOpenDelete} className="relative z-10">
+      <Dialog open={openDelete} onClose={setOpenDelete} className="relative z-10">
         <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
 
         <div className="fixed inset-0 flex items-center justify-center">
@@ -279,7 +290,7 @@ export default function TableAdmins() {
 
               <Button
                 className="bg-red-500 text-white"
-                onClick={() => setOpenDelete(false)}
+                onClick={() => selectedAdmin && deleteAdmin(selectedAdmin)}
               >
                 Supprimer
               </Button>

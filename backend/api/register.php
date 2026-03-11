@@ -63,6 +63,15 @@ if (!$etudiant) {
     exit;
 }
 
+$stmt = $pdo->prepare("SELECT id_etudiant, email, mot_de_passe FROM etudiant WHERE nni = ?");
+$stmt->execute([$nni]);
+$nni = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if ($nni) {
+    http_response_code(404);
+    echo json_encode(["message" => "NNI existant avec un compte"]);
+    exit;
+}
 
 $stmt = $pdo->prepare("SELECT id_employe, nom, prenom, email, mot_de_passe FROM employe WHERE email = ?");
 $stmt->execute([$email]);

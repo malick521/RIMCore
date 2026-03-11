@@ -16,7 +16,7 @@ type Employe = {
   id_employe: number;
   prenom: string;
   nom: string;
-  role: string;
+  email: string;
   date_ajout: string;
   Admin_Id: number;
 };
@@ -26,7 +26,10 @@ export default function TableEmployes() {
   const [openAdd, setOpenAdd] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [currentAdmin, setCurrentAdmin] = useState<number | null>(null);
+  const [selectedEmp, setSelectedEmp] = useState<number | null>(null);
 
+  // Fonction création employé
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -62,30 +65,79 @@ export default function TableEmployes() {
         toast.error(result.message || "Inscription refusée");
         return;
       }
-
-      toast.success("Compte créé avec succès !");
+      toast.success(result.message);
       setOpenAdd(false);
+      setSelectedEmp(null);
+      fetchEmps()
+
     } catch (error) {
-      toast.error("Erreur serveur");
+      toast.error("Erreur serveur ici");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
+  // Fonction suppression employé
+  const deleteEmp = async (id: number) => {
+    setLoading(true);
+
+    try {
+      const res = await fetch(
+        "http://localhost:8000/api/delete-employe.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({id}),
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.message || "Suppression refusée");
+        return;
+      }
+
+      toast.success("Employé supprimé avec succès !");
+      setEmployes((prev) => prev.filter((emp) => emp.id_employe !== id));
+      setOpenDelete(false);
+      setSelectedEmp(null);
+
+    } catch (error) {
+      toast.error("Erreur serveur front");
+      setOpenDelete(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  
+  const fetchEmps = async () => {
     const userStr = localStorage.getItem("user");
     if (!userStr) return;
 
     const user = JSON.parse(userStr);
+    setCurrentAdmin(user.id);
 
-    fetch(`http://localhost:8000/api/employes.php?id_admin=${user.id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setEmployes(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
+    try {
+      const res = await fetch(
+        `http://localhost:8000/api/employes.php?id_admin=${user.id}`
+      );
+
+      const data = await res.json();
+      setEmployes(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  // Fetch liste des employés
+  useEffect(() => {
+      fetchEmps();
+    }, []);
 
   if (loading)
     return (
@@ -96,6 +148,7 @@ export default function TableEmployes() {
 
   return (
     <>
+      {/* TABLE DES EMPLOYES */}
       <div className="min-h-screen m-30">
         <h1 className="text-3xl text-center font-semibold mb-7">
           Gestion des Employés
@@ -109,60 +162,63 @@ export default function TableEmployes() {
         </Button>
 
         <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
-          <table className="w-full text-sm text-left border-collapse">
-    <thead className="border-b hidden md:table-header-group">
-      <tr>
-        <th className="px-6 py-3">ID</th>
-        <th className="px-6 py-3">Prénom</th>
-        <th className="px-6 py-3">Nom</th>
-        <th className="px-6 py-3">Role</th>
-        <th className="px-6 py-3">Date</th>
-        <th className="px-6 py-3">Admin</th>
-        <th className="px-6 py-3">Action</th>
-      </tr>
-    </thead>
+         <table className="w-full text-sm text-left">
+            <thead className="border-b hidden md:table-header-group">
+              <tr>
+                <th className="px-6 py-3">ID</th>
+                <th className="px-6 py-3">Prénom</th>
+                <th className="px-6 py-3">Nom</th>
+                <th className="px-6 py-3">Email</th>
+                <th className="px-6 py-3">Date</th>
+                <th className="px-6 py-3">Admin</th>
+                <th className="px-6 py-3">Action</th>
+              </tr>
+            </thead>
 
-    <tbody>
-      {employes.map((emp) => (
-        <tr
-          key={emp.id_employe}
-          className="border-b block md:table-row mb-4 md:mb-0"
-        >
-          <td data-label="ID" className="px-6 py-4 block md:table-cell">
-            {emp.id_employe}
-          </td>
+            <tbody>
+              {employes.map((emp) => (
+                <tr
+                  key={emp.id_employe}
+                  className="border-b block md:table-row mb-4 md:mb-0"
+                >
+                  <td data-label="ID" className="px-6 py-4 block md:table-cell">
+                    {emp.id_employe}
+                  </td>
 
-          <td data-label="Prénom" className="px-6 py-4 block md:table-cell">
-            {emp.prenom}
-          </td>
+                  <td data-label="Prénom" className="px-6 py-4 block md:table-cell">
+                    {emp.prenom}
+                  </td>
 
-          <td data-label="Nom" className="px-6 py-4 block md:table-cell">
-            {emp.nom}
-          </td>
+                  <td data-label="Nom" className="px-6 py-4 block md:table-cell">
+                    {emp.nom}
+                  </td>
 
-          <td data-label="Role" className="px-6 py-4 block md:table-cell">
-            {emp.role}
-          </td>
+                  <td data-label="Role" className="px-6 py-4 block md:table-cell">
+                    {emp.email}
+                  </td>
 
-          <td data-label="Date" className="px-6 py-4 block md:table-cell">
-            {emp.date_ajout}
-          </td>
+                  <td data-label="Date" className="px-6 py-4 block md:table-cell">
+                    {emp.date_ajout}
+                  </td>
 
-          <td data-label="Admin" className="px-6 py-4 block md:table-cell">
-            {emp.Admin_Id}
-          </td>
+                  <td data-label="Admin" className="px-6 py-4 block md:table-cell">
+                    {emp.Admin_Id}
+                  </td>
 
-          <td data-label="Action" className="px-6 py-4 block md:table-cell">
-            <Button
-              onClick={() => setOpenDelete(true)}
-              className="bg-red-500 text-white"
-            >
-              Supprimer
-            </Button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
+                  <td data-label="Action" className="px-6 py-4 block md:table-cell">
+                    <Button
+                      onClick={() => {
+                        setSelectedEmp(emp.id_employe);
+                        setOpenDelete(true);
+                      }}
+                      className="bg-red-500 text-white"
+                    >
+                      Supprimer
+                    </Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
           </table>
         </div>
       </div>
@@ -174,7 +230,7 @@ export default function TableEmployes() {
         <div className="fixed inset-0 flex items-center justify-center">
           <DialogPanel className="bg-white rounded-lg p-6 max-w-lg w-full">
             <DialogTitle className="text-xl font-semibold mb-4">
-              Creation d'un compte employé
+              Création d'un compte employé
             </DialogTitle>
 
             <form onSubmit={handleSubmit}>
@@ -200,7 +256,9 @@ export default function TableEmployes() {
                 className="w-full border p-2 mb-3"
               />
 
-              <Button className="w-full">
+              <Button 
+                className="w-full"
+              >
                 Créer {loading && <Loader />}
               </Button>
             </form>
@@ -233,9 +291,9 @@ export default function TableEmployes() {
 
               <Button
                 className="bg-red-500 text-white"
-                onClick={() => setOpenDelete(false)}
+                onClick={() => selectedEmp && deleteEmp(selectedEmp)}
               >
-                Supprimer
+                {loading ? "Suppression..." : "Supprimer"}
               </Button>
             </div>
           </DialogPanel>

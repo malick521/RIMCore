@@ -24,7 +24,7 @@ if (
     empty($data['password'])
 ) {
     http_response_code(400);
-    echo json_encode(["message" => "Tous les champs sont obligatoires"]);
+    echo json_encode(["message" => "Tous les champs sont obligatoires zi"]);
     exit;
 }
 
@@ -72,8 +72,6 @@ if ($etudiant) {
     exit;
 }
 
-
-
 // Hash du mot de passe
 $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -94,5 +92,3 @@ try {
 http_response_code(200);
 echo json_encode(["message" => "Inscription réussie"]);
 
-
-echo $data;
