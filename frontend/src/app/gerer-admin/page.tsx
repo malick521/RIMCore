@@ -153,20 +153,20 @@ export default function TableAdmins() {
     <>
       {/* TABLE DES ADMINS */}
       <div className="min-h-screen m-30">
-        <h1 className="text-3xl text-center font-semibold mb-7">
+        <h1 className="text-3xl text-center font-semibold mb-7 md:text-center">
           Gestion des Administrateurs
         </h1>
 
         <Button
           onClick={() => setOpenAddModal(true)}
-          className="bg-primary shadow-lg rounded-lg p-3 mb-10"
+          className="bg-primary shadow-lg rounded-lg p-3 mb-10 block mx-auto md:flex md:items-center"
         >
           Ajouter un Admin
         </Button>
 
        <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
           <table className="w-full text-sm text-left">
-             <thead className="border-b hidden md:table-header-group">
+             <thead className="border-b hidden md:table-header-group bg-gray-100">
               <tr>
                 <th className="px-6 py-3">ID</th>
                 <th className="px-6 py-3">Prénom</th>
@@ -213,89 +213,99 @@ export default function TableAdmins() {
       MODAL AJOUT ADMIN
       ========================= */}
 
-      <Dialog open={openAddModal} onClose={setOpenAddModal} className="relative z-10">
-          <DialogBackdrop className="fixed inset-0 bg-black/40" />
-
-          <div className="fixed inset-0 flex items-center justify-center">
-            <DialogPanel className="bg-white rounded-lg p-6 max-w-lg w-full">
-              <DialogTitle className="text-xl font-semibold mb-4">
-                Creation d'un compte Administrateur
+     <Dialog open={openAddModal} onClose={() => setOpenAddModal(false)} className="relative z-10">
+        <DialogBackdrop className="fixed inset-0 bg-black/40" />
+          <div className="fixed inset-0 flex items-center justify-center p-4">
+            <DialogPanel 
+              className="bg-white rounded-lg p-6 w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl 
+                        overflow-y-auto max-h-[90vh]"
+            >
+              <DialogTitle className="text-xl font-semibold mb-4 text-center sm:text-left">
+                Création d'un compte Administrateur
               </DialogTitle>
 
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="prenom"
-                placeholder="Prénom"
-                className="w-full border p-2 rounded mb-3"
-              />
+              <form onSubmit={handleSubmit} className="space-y-3">
+                <input
+                  type="text"
+                  name="prenom"
+                  placeholder="Prénom"
+                  className="w-full border p-2 rounded"
+                />
 
-              <input
-                type="text"
-                name="nom"
-                placeholder="Nom"
-                className="w-full border p-2 rounded mb-3"
-              />
+                <input
+                  type="text"
+                  name="nom"
+                  placeholder="Nom"
+                  className="w-full border p-2 rounded"
+                />
 
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                className="w-full border p-2 rounded mb-3"
-              />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  className="w-full border p-2 rounded"
+                />
 
-              <input
-                type="password"
-                name="password"
-                placeholder="Mot de passe"
-                className="w-full border p-2 rounded mb-3"
-              />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="Mot de passe"
+                  className="w-full border p-2 rounded"
+                />
 
-              <Button className="w-full">
-                Créer {loading && <Loader />}
-              </Button>
-            </form>
-
-              </DialogPanel>
+                <Button className="w-full mt-2">
+                  Créer {loading && <Loader />}
+                </Button>
+              </form>
+            </DialogPanel>
           </div>
-      
-          
       </Dialog>
 
       {/* =========================
       MODAL SUPPRESSION ADMIN
       ========================= */}
-
-      <Dialog open={openDelete} onClose={setOpenDelete} className="relative z-10">
+       <Dialog open={openDelete} onClose={setOpenDelete} className="relative z-10">
         <DialogBackdrop className="fixed inset-0 bg-gray-900/50" />
 
-        <div className="fixed inset-0 flex items-center justify-center">
-          <DialogPanel className="bg-gray-800 rounded-lg p-6 max-w-lg w-full text-white">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-500/10">
-                <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            
+            <DialogPanel className="bg-gray-800 rounded-lg p-5 sm:p-6 w-full max-w-sm sm:max-w-lg text-white shadow-xl">
+              
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-red-500/10">
+                  <ExclamationTriangleIcon className="h-6 w-6 text-red-400" />
+                </div>
+
+                <DialogTitle className="text-base sm:text-lg font-semibold">
+                  Supprimer cet admin ?
+                </DialogTitle>
               </div>
 
-              <DialogTitle className="text-lg font-semibold">
-                Supprimer cet admin ?
-              </DialogTitle>
-            </div>
+              <p className="mt-3 text-sm text-gray-400">
+                Cette action est définitive.
+              </p>
 
-            <p className="mt-3 text-gray-400">
-              Cette action est définitive.
-            </p>
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-6">
+                
+               <Button
+                  className="w-full sm:w-auto"
+                  onClick={() => setOpenDelete(false)}
+                >
+                  Annuler
+                </Button>
 
-            <div className="flex justify-end gap-3 mt-6">
-              <Button onClick={() => setOpenDelete(false)}>Annuler</Button>
+                <Button
+                   className="w-full sm:w-auto bg-red-500 text-white"
+                  onClick={() => selectedAdmin && deleteAdmin(selectedAdmin)}
+                >
+                  Supprimer
+                </Button>
+              </div>
 
-              <Button
-                className="bg-red-500 text-white"
-                onClick={() => selectedAdmin && deleteAdmin(selectedAdmin)}
-              >
-                Supprimer
-              </Button>
-            </div>
-          </DialogPanel>
+            </DialogPanel>
+
+          </div>
         </div>
       </Dialog>
     </>
