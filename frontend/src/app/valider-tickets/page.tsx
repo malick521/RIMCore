@@ -47,12 +47,12 @@ export default function ValidezTicket() {
             return;
             }
 
-            toast.success("Ticket Verifié !");
+            toast.success(result.message);
             // router.push("/signin");
         } 
         
         catch (error) {
-            toast.error("Erreur serveur ici");
+            toast.error("Erreur serveur");
         } 
         
         finally {

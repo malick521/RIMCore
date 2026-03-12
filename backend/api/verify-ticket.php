@@ -65,12 +65,11 @@ if ($expiration < $now) {
 
 // vérifier statut
 if ($ticket['statut'] === "utilisé") {
-    echo json_encode([
-        "success" => false,
-        "message" => "Ticket déjà utilisé"
-    ]);
+    http_response_code(400);
+    echo json_encode(["message" => "Ticket utilisé"]);
     exit;
 }
+
 
 // mettre statut utilisé
 $update = $pdo->prepare("
