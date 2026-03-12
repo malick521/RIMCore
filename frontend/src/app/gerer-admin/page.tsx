@@ -174,19 +174,31 @@ export default function TableAdmins() {
                 <th className="px-6 py-3">Email</th>
                 <th className="px-6 py-3">Role</th>
                 <th className="px-6 py-3">Date</th>
-                <th className="px-6 py-3">Action</th>
+                {(currentAdmin === 1) && (<th className="px-6 py-3">Action</th>)}
               </tr>
             </thead>
 
             <tbody>
               {admins.map((admin) => (
                 <tr key={admin.id_admin}  className="border-b block md:table-row mb-4 md:mb-0">
-                  <td data-label="ID" className="px-6 py-4 block md:table-cell">{admin.id_admin}</td>
-                  <td data-label="Prenom" className="px-6 py-4 block md:table-cell">{admin.prenom}</td>
-                  <td data-label="Nom" className="px-6 py-4 block md:table-cell">{admin.nom}</td>
-                  <td data-label="Email" className="px-6 py-4 block md:table-cell">{admin.email}</td>
-                  <td data-label="Role" className="px-6 py-4 block md:table-cell">{admin.role}</td>
-                  <td data-label="Dajeajout" className="px-6 py-4 block md:table-cell">{admin.date_ajout}</td>
+                  <td data-label="ID" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">ID Admin: </span>
+                    {admin.id_admin}</td>
+                  <td data-label="Prenom" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Prenom: </span>
+                    {admin.prenom}</td>
+                  <td data-label="Nom" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Nom: </span>
+                    {admin.nom}</td>
+                  <td data-label="Email" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Email: </span>
+                    {admin.email}</td>
+                  <td data-label="Role" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Role: </span>
+                    {admin.role}</td>
+                  <td data-label="Dajeajout" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Date Ajout: </span>
+                    {admin.date_ajout}</td>
 
                   <td className="px-6 py-4 block md:table-cell">
                       {(currentAdmin === 1 && admin.id_admin != 1) &&(

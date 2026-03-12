@@ -4,7 +4,10 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { useEffect } from "react";
 import toast from "react-hot-toast";
+import { ArrowDownTrayIcon, CreditCardIcon } from '@heroicons/react/24/solid'; 
 import Loader from "@/components/Common/Loader";
+import { CurrencyIcon } from "lucide-react";
+import { CurrencyDollarIcon } from "@heroicons/react/24/outline";
 
 export default function PaymentPage() {
     const [paymentData, setPaymentData] = useState({
@@ -94,86 +97,100 @@ if (!userStr) {
 
 
     return (
-        <div className="flex flex-col mt-30 items-center justify-center h-screen px-4">
-            <h1 className="text-3xl font-bold mb-4">Paiement</h1>
+       <div className="min-h-screen mt-30 mb-30 flex flex-col items-center justify-center px-4 py-10 bg-gray-50">
 
-            {method ? (
-                <>    <p className="text-lg ">
-                        Moyen de paiement sélectionné :{" "}
-                        <span className="font-semibold text-primary">
-                            {method.toUpperCase()}
-                        </span>
-                    </p>
+    <h1 className="text-2xl sm:text-3xl font-bold mb-6">Paiement</h1>
 
-                   <form onSubmit={handlePayment} className="w-full max-w-3xl mx-auto p-6 mt-10 bg-white shadow-lg rounded-xl">
-                        <h2 className="text-3xl font-semibold text-center mb-6 text-gray-800">
-                            Finalisez l'achat
-                        </h2>
+    {method ? (
+        <>
+            <p className="text-sm sm:text-base text-gray-700 mb-6 text-center">
+                Moyen de paiement sélectionné :{" "}
+                <span className="font-semibold text-primary">
+                    {method.toUpperCase()}
+                </span>
+            </p>
 
-                        {/* Prix (disabled) */}
-                        <div className="mb-4">
-                            <label htmlFor="prix" className="block text-gray-700 font-medium mb-1">
-                            Montant
-                            </label>
-                            <input
-                             type="text"
-                            id="prix"
-                            placeholder="5 MRU"
-                            disabled
-                            className="w-full p-3 rounded-lg border border-blue-700 bg-gray-100 text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            
-                            />
-                        </div>
+            <form
+                onSubmit={handlePayment}
+                className="w-full max-w-md bg-white p-6 sm:p-7 rounded-xl shadow-lg"
+            >
+                <h2 className="text-xl sm:text-2xl font-semibold text-center mb-6 text-gray-800">
+                    Finalisez l'achat
+                </h2>
 
-                        {/* Numéro */}
-                        <div className="mb-4">
-                            <label htmlFor="number" className="block text-gray-700 font-medium mb-1">
-                            Numéro
-                            </label>
-                            <input
-                             onChange={(e) =>
+                {/* Montant */}
+                <div className="mb-4">
+                    <label
+                        htmlFor="prix"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Montant
+                    </label>
+
+                    <input
+                        type="text"
+                        id="prix"
+                        value="5 MRU"
+                        disabled
+                        className="w-full p-3 rounded-lg border border-gray-300 bg-gray-100 text-gray-700"
+                    />
+                </div>
+
+                {/* Numéro */}
+                <div className="mb-4">
+                    <label
+                        htmlFor="number"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Numéro
+                    </label>
+
+                    <input
+                        onChange={(e) =>
                             setPaymentData({ ...paymentData, numero: e.target.value })
                         }
-                           
-                            type="number"
-                            id="number"
-                            name="numero"
-                            placeholder="Entrez votre numéro"
-                            className="w-full p-3 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            />
-                        </div>
+                        type="tel"
+                        id="number"
+                        name="numero"
+                        placeholder="Entrez votre numéro"
+                        className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                </div>
 
-                        {/* Code secret */}
-                        <div className="mb-6">
-                            <label htmlFor="code" className="block text-gray-700 font-medium mb-1">
-                            Code secret
-                            </label>
-                            <input
-                             onChange={(e) =>
+                {/* Code secret */}
+                <div className="mb-6">
+                    <label
+                        htmlFor="code"
+                        className="block text-sm font-medium text-gray-700 mb-1"
+                    >
+                        Code secret
+                    </label>
+
+                    <input
+                        onChange={(e) =>
                             setPaymentData({ ...paymentData, code: e.target.value })
                         }
-                           
-                            type="password"
-                            id="code"
-                            name="code"
-                            placeholder="Entrez votre code secret"
-                            className="w-full p-3 rounded-lg border border-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            />
-                        </div>
+                        type="password"
+                        id="code"
+                        name="code"
+                        placeholder="Entrez votre code secret"
+                        className="w-full p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
+                </div>
 
-                        {/* Bouton */}
-                        <button
-                            type="submit"
-                            className="w-full cursor-pointer bg-primary text-white font-semibold py-3 rounded-lg hover:bg-blue-700 transition-colors"
-                        >
-                            Acheter {loading && <Loader />}
-                        </button>
-                    </form>
-
-                </>
-            ) : (
-                <p className="text-red-500">Aucun moyen de paiement sélectionné</p>
-            )}
-        </div>
+                {/* Bouton */}
+                <button
+                    type="submit"
+                    className="cursor-pointer flex items-center justify-center gap-2 w-full sm:w-2/3 mx-auto bg-black text-white py-3 rounded-full hover:bg-gray-900 active:scale-95 transition"
+                >
+                    <CreditCardIcon className="h-5 w-5" />
+                    Acheter
+                </button>
+            </form>
+        </>
+    ) : (
+        <p className="text-red-500">Aucun moyen de paiement sélectionné</p>
+    )}
+</div>
     );
 }

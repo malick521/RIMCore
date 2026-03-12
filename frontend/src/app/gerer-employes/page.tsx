@@ -175,44 +175,43 @@ export default function TableEmployes() {
       </tr>
     </thead>
 
-    <tbody>
-      {employes.map((emp) => (
-        <tr
-          key={emp.id_employe}
-          className="border-b block md:table-row mb-4 md:mb-0 rounded-lg bg-white md:bg-transparent shadow md:shadow-none"
-        >
-          {/** Chaque td sur mobile affiche son label avant la valeur */}
-          {[
-            ["ID", emp.id_employe],
-            ["Prénom", emp.prenom],
-            ["Nom", emp.nom],
-            ["Email", emp.email],
-            ["Date", emp.date_ajout],
-            ["Admin", emp.Admin_Id],
-          ].map(([label, value], idx) => (
-            <td
-              key={idx}
-              data-label={label}
-              className="px-6 py-4 block md:table-cell relative before:content-[attr(data-label)]:font-semibold before:block before:text-gray-500 md:before:content-none"
-            >
-              {value}
-            </td>
-          ))}
+     <tbody>
+              {employes.map((emp) => (
+                <tr key={emp.id_employe}  className="border-b block md:table-row mb-4 md:mb-0">
+                  <td data-label="ID" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">ID Employe: </span>
+                    {emp.id_employe}</td>
+                  <td data-label="Prenom" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Prenom: </span>
+                    {emp.prenom}</td>
+                  <td data-label="Nom" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Nom: </span>
+                    {emp.nom}</td>
+                  <td data-label="Email" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Email: </span>
+                    {emp.email}</td>
+                  <td data-label="Date ajout" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">Date Ajout: </span>
+                    {emp.date_ajout}</td>
+                  <td data-label="Date ajout" className="px-6 py-4 block md:table-cell">
+                    <span className="font-semibold md:hidden">ADMIN: </span>
+                    {emp.Admin_Id}</td>
 
-          <td className="px-6 py-4 block md:table-cell">
-            <Button
-              onClick={() => {
-                setSelectedEmp(emp.id_employe);
-                setOpenDelete(true);
-              }}
-              className="bg-red-500 text-white w-full md:w-auto"
-            >
-              Supprimer
-            </Button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
+                  <td className="px-6 py-4 block md:table-cell">
+                          <Button
+                            variant="destructive"
+                            className="bg-red-500 text-white"
+                            onClick={() => {
+                              setSelectedEmp(emp.id_employe);
+                              setOpenDelete(true);
+                            }}
+                          >
+                            Supprimer
+                          </Button>                  
+                  </td>
+                </tr>
+              ))}
+            </tbody>
   </table>
 </div>
       </div>

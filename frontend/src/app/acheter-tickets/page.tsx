@@ -2,60 +2,81 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import PayButton from "./payButton"; // Client Component
+import PayButton from "./payButton";
 
 export default function AcheterTicketsPage() {
     const [selectedPayment, setSelectedPayment] = useState<string | null>(null);
-   
 
     return (
-        <div className="flex flex-col mt-20 items-center justify-center min-h-screen px-4">
-            <h1 className="text-3xl font-bold mb-6">Acheter vos Tickets</h1>
-            <p className="mt-4 text-lg text-gray-600 mb-7">D'autres moyens de paiments seront implementés !</p>
+        <div className="min-h-screen mt-30 mb-30 flex items-center justify-center px-4">
 
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-                <h3 className="text-lg font-medium mb-4">Moyens de paiement</h3>
+            <div className="w-full max-w-md">
 
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <h1 className="text-2xl sm:text-3xl font-bold">
+                        Acheter vos tickets
+                    </h1>
 
-                <div className="grid grid-cols-2 gap-4">
-                    {/* Masrvi */}
-                    <div
-                        onClick={() => setSelectedPayment("masrvi")}
-                        className={`border rounded-xl p-4 flex items-center justify-center cursor-pointer transition
-                            ${selectedPayment === "masrvi"
-                                ? "border-primary bg-primary/10 shadow-md"
-                                : "hover:shadow-md"}
-                        `}
-                    >
-                        <Image
-                            src="/images/payment/masrvi.png"
-                            alt="Masrvi"
-                            width={120}
-                            height={60}
-                        />
-                    </div>
-
-                    {/* Bankily */}
-                    <div
-                        onClick={() => setSelectedPayment("bankily")}
-                        className={`border rounded-xl p-4 flex items-center justify-center cursor-pointer transition
-                            ${selectedPayment === "bankily"
-                                ? "border-primary bg-primary/10 shadow-md"
-                                : "hover:shadow-md"}
-                        `}
-                    >
-                        <Image
-                            src="/images/payment/bankily.png"
-                            alt="Bankily"
-                            width={120}
-                            height={60}
-                        />
-                    </div>
+                    <p className="mt-2 text-sm sm:text-base text-gray-600">
+                        Choisissez votre moyen de paiement
+                    </p>
                 </div>
 
-                {/* Bouton Client pour payer */}
-                <PayButton selectedPayment={selectedPayment} />
+                {/* Card */}
+                <div className="bg-white shadow-xl rounded-xl p-6">
+
+                    <h3 className="text-sm font-medium text-gray-700 mb-4">
+                        Moyens de paiement
+                    </h3>
+
+                    <div className="space-y-3">
+
+                        {/* Masrvi */}
+                        <div
+                            onClick={() => setSelectedPayment("masrvi")}
+                            className={`flex items-center justify-center border rounded-lg p-3 cursor-pointer transition
+                            ${selectedPayment === "masrvi"
+                                ? "border-black bg-gray-100"
+                                : "hover:bg-gray-50"}
+                            `}
+                        >
+                            <Image
+                                src="/images/payment/masrvi.png"
+                                alt="Masrvi"
+                                width={110}
+                                height={50}
+                            />
+                        </div>
+
+                        {/* Bankily */}
+                        <div
+                            onClick={() => setSelectedPayment("bankily")}
+                            className={`flex items-center justify-center border rounded-lg p-3 cursor-pointer transition
+                            ${selectedPayment === "bankily"
+                                ? "border-black bg-gray-100"
+                                : "hover:bg-gray-50"}
+                            `}
+                        >
+                            <Image
+                                src="/images/payment/bankily.png"
+                                alt="Bankily"
+                                width={110}
+                                height={50}
+                            />
+                        </div>
+
+                    </div>
+
+                    {/* Bouton */}
+                    <div className="mt-6">
+                        <PayButton selectedPayment={selectedPayment} />
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
     );
 }

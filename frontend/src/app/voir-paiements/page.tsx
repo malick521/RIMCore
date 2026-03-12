@@ -56,35 +56,71 @@ export default function VoirPaiement() {
         <div className="min-h-screen m-30">
         <h1 className="text-3xl text-center font-semibold mb-7">Gestion des Paiement : </h1>
          <Button 
-            className='bg-emerald-700 shadow-lg rounded-lg p-3 mb-10 block mx-auto md:flex md:items-center'
+            className="
+                bg-emerald-800 
+                shadow-lg 
+                rounded-lg 
+                p-3 
+                mb-10 
+                mx-auto 
+                flex 
+                flex-wrap 
+                items-center 
+                justify-center 
+                gap-2 
+                w-max
+                md:flex-nowrap
+            "
             onClick={() => exportToExcel(paiements, 'paiements.xlsx')}
          >
          <ArrowDownTrayIcon className="h-5 w-5" />
           Expotez format Excel
         </Button>
-        <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
-          <table className="w-full text-sm text-left">
-             <thead className="border-b hidden md:table-header-group bg-gray-100">
-                    <tr>
-                        <th className="px-6 py-3 font-semibold">ID Transaction</th>
-                        <th className="px-6 py-3 font-semibold">ID Ticket</th>
-                        <th className="px-6 py-3 font-semibold">Montant</th>
-                        <th className="px-6 py-3 font-semibold">Date Paiement</th>
-                        <th className="px-6 py-3 font-semibold">Moyen Paiement</th>
-                        <th className="px-6 py-3 font-semibold">Status</th>
-                    </tr>
+       <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
+            <table className="w-full text-sm text-left border-collapse">
+                <thead className="border-b hidden md:table-header-group bg-gray-100">
+                <tr>
+                    <th className="px-6 py-3 font-semibold">ID Transaction</th>
+                    <th className="px-6 py-3 font-semibold">ID Ticket</th>
+                    <th className="px-6 py-3 font-semibold">Montant</th>
+                    <th className="px-6 py-3 font-semibold">Date Paiement</th>
+                    <th className="px-6 py-3 font-semibold">Moyen Paiement</th>
+                    <th className="px-6 py-3 font-semibold">Status</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {paiements.map((paiement) => (
-                        <tr key={paiement.id_transaction} className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium">
-                            <td data-label="IDTR" className="px-6 py-4 block md:table-cell">{paiement.id_transaction}</td>
-                            <td data-label="IDTC" className="px-6 py-4 block md:table-cell">{paiement.id_ticket}</td>
-                            <td data-label="Montant" className="px-6 py-4 block md:table-cell">{paiement.montant}</td>
-                            <td data-label="Date" className="px-6 py-4 block md:table-cell">{paiement.date_paiement}</td>
-                            <td data-label="Moyen" className="px-6 py-4 block md:table-cell">{paiement.moyen_paiement}</td>
-                            <td data-label="Satus" className="px-6 py-4 block md:table-cell">{paiement.statut}</td>
-                        </tr>
-                    ))}
+                {paiements.map((paiement) => (
+                    <tr
+                    key={paiement.id_transaction}
+                    className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium md:table-row block"
+                    >
+                    {/** Chaque td devient un mini “row” sur mobile */}
+                    <td className="px-6 py-4 block md:table-cell" data-label="ID Transaction">
+                        <span className="font-semibold md:hidden">ID Transaction: </span>
+                        {paiement.id_transaction}
+                    </td>
+                    <td className="px-6 py-4 block md:table-cell" data-label="ID Ticket">
+                        <span className="font-semibold md:hidden">ID Ticket: </span>
+                        {paiement.id_ticket}
+                    </td>
+                    <td className="px-6 py-4 block md:table-cell" data-label="Montant">
+                        <span className="font-semibold md:hidden">Montant: </span>
+                        {paiement.montant}
+                    </td>
+                    <td className="px-6 py-4 block md:table-cell" data-label="Date Paiement">
+                        <span className="font-semibold md:hidden">Date Paiement: </span>
+                        {paiement.date_paiement}
+                    </td>
+                    <td className="px-6 py-4 block md:table-cell" data-label="Moyen Paiement">
+                        <span className="font-semibold md:hidden">Moyen Paiement: </span>
+                        {paiement.moyen_paiement}
+                    </td>
+                    <td className="px-6 py-4 block md:table-cell" data-label="Status">
+                        <span className="font-semibold md:hidden">Status: </span>
+                        {paiement.statut}
+                    </td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>
