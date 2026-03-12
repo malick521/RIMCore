@@ -6,33 +6,39 @@ header("Content-Type: application/json");
 
 require_once "../config/db.php";
 
-$EmpId = $_GET['id_employe'] ?? null;
-
-if (!$EmpId) { 
-    echo json_encode([]);
-    exit;
-}
-
+// Gestion des requêtes OPTIONS pour CORS
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
 }
 
-// récupérer JSON envoyé
-$input = json_decode(file_get_contents("php://input"), true);
-
-if (!isset($input['numero_ticket'])) {
-    http_response_code(400);
+// Vérifier que la requête est POST
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
     echo json_encode([
         "success" => false,
-        "message" => "Numéro de ticket manquant"
+        "message" => "Méthode non autorisée"
     ]);
     exit;
 }
 
-$numero_ticket = $input['numero_ticket'];
+// Récupérer le JSON envoyé
+$input = json_decode(file_get_contents("php://input"), true);
 
-// chercher le ticket
+// Vérifier que les informations nécessaires sont présentes
+$numero_ticket = $input['numero_ticket'] ?? null;
+$EmpId = $input['id_employe'] ?? null;
+
+if (!$numero_ticket || !$EmpId) {
+    http_response_code(400);
+    echo json_encode([
+        "success" => false,
+        "message" => "Informations manquantes"
+    ]);
+    exit;
+}
+
+// Chercher le ticket
 $stmt = $pdo->prepare("
     SELECT * FROM ticket
     WHERE numero_ticket = :numero_ticket
@@ -43,7 +49,9 @@ $stmt->execute();
 
 $ticket = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// Vérifier que le ticket existe
 if (!$ticket) {
+    http_response_code(404);
     echo json_encode([
         "success" => false,
         "message" => "Ticket introuvable"
@@ -51,11 +59,11 @@ if (!$ticket) {
     exit;
 }
 
-// vérifier expiration
+// Vérifier expiration
 $now = new DateTime();
 $expiration = new DateTime($ticket['date_expiration']);
-
 if ($expiration < $now) {
+    http_response_code(400);
     echo json_encode([
         "success" => false,
         "message" => "Ticket expiré"
@@ -63,35 +71,36 @@ if ($expiration < $now) {
     exit;
 }
 
-// vérifier statut
+// Vérifier si déjà utilisé
 if ($ticket['statut'] === "utilisé") {
     http_response_code(400);
-    echo json_encode(["message" => "Ticket utilisé"]);
+    echo json_encode([
+        "success" => false,
+        "message" => "Ticket déjà utilisé"
+    ]);
     exit;
 }
 
-
-// mettre statut utilisé
+// Mettre à jour le ticket (statut + employé)
 $update = $pdo->prepare("
     UPDATE ticket
-    SET statut = 'utilisé'
+    SET statut = 'utilisé', id_employe = :id_employe
     WHERE id_ticket = :id_ticket
 ");
-
 $update->bindParam(':id_ticket', $ticket['id_ticket']);
 $update->bindParam(':id_employe', $EmpId);
 $update->execute();
 
-// réponse
+// Réponse JSON
 echo json_encode([
     "success" => true,
-    "message" => "Ticket valide",
+    "message" => "Ticket validé",
     "ticket" => [
         "id_ticket" => $ticket['id_ticket'],
         "numero_ticket" => $ticket['numero_ticket'],
         "id_etudiant" => $ticket['id_etudiant'],
-        "date_achat" => $ticket['date_achat'],
         "id_employe" => $EmpId,
+        "date_achat" => $ticket['date_achat'],
         "date_expiration" => $ticket['date_expiration'],
         "statut" => "utilisé"
     ]

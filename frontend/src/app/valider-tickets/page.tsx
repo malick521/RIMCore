@@ -33,10 +33,14 @@ export default function ValidezTicket() {
         }
 
         try {
-            const res = await fetch(`http://localhost:8000/api/verify-ticket.php?id_employe=${user.id}`, {
+            const formData = {
+                numero_ticket: data.numero_ticket, 
+                id_employe: user.id  // récupéré du localStorage ou context
+            };
+            const res = await fetch("http://localhost:8000/api/verify-ticket.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
+            body: JSON.stringify(formData),
                 });
 
             const result = await res.json();
