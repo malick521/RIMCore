@@ -6,6 +6,13 @@ header("Content-Type: application/json");
 
 require_once "../config/db.php";
 
+$EmpId = $_GET['id_employe'] ?? null;
+
+if (!$EmpId) { 
+    echo json_encode([]);
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     http_response_code(200);
     exit;
@@ -73,6 +80,7 @@ $update = $pdo->prepare("
 ");
 
 $update->bindParam(':id_ticket', $ticket['id_ticket']);
+$update->bindParam(':id_employe', $EmpId);
 $update->execute();
 
 // réponse
@@ -84,6 +92,7 @@ echo json_encode([
         "numero_ticket" => $ticket['numero_ticket'],
         "id_etudiant" => $ticket['id_etudiant'],
         "date_achat" => $ticket['date_achat'],
+        "id_employe" => $EmpId,
         "date_expiration" => $ticket['date_expiration'],
         "statut" => "utilisé"
     ]

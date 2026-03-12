@@ -17,7 +17,9 @@ export default function ValidezTicket() {
     
   
  const verifyTicket = async (e: React.FormEvent<HTMLFormElement>) => {
-        
+        const userStr = localStorage.getItem("user");
+        if (!userStr) return;
+        const user = JSON.parse(userStr);
         e.preventDefault();
         setLoading(true);
 
@@ -31,7 +33,7 @@ export default function ValidezTicket() {
         }
 
         try {
-            const res = await fetch("http://localhost:8000/api/verify-ticket.php", {
+            const res = await fetch(`http://localhost:8000/api/verify-ticket.php?id_employe=${user.id}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),

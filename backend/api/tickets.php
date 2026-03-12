@@ -11,8 +11,20 @@ if (!$etudiantId) {
     exit;
 }
 
+$now = (new DateTime())->format('Y-m-d H:i:s');
 
-// Récupérer les tickets de l'étudiant
+$updateExpired = $pdo->prepare("
+    UPDATE ticket
+    SET statut = 'expiré'
+    WHERE id_etudiant = :id_etudiant 
+      AND date_expiration < :now
+      AND statut != 'utilisé'
+");
+$updateExpired->bindParam(':id_etudiant', $etudiantId);
+$updateExpired->bindParam(':now', $now);
+$updateExpired->execute();
+
+
 $stmt = $pdo->prepare("SELECT * FROM ticket WHERE id_etudiant = ?");
 $stmt->execute([$etudiantId]);
 $tickets = $stmt->fetchAll(PDO::FETCH_ASSOC);

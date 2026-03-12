@@ -5,6 +5,7 @@ export const menuDataAdmin: HeaderItem[] = [
   { label: "Employés", href: "/gerer-employes" },
   { label: "Administrateurs", href: "/gerer-admin" },
   { label: "Paiements", href: "/voir-paiements" },
+  { label: "Tickets", href: "/tickets" },
   { label: "Contact", href: "/contact" },
 ];
 

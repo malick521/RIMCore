@@ -21,6 +21,11 @@ export default function VoirPaiement() {
 
     const [paiements, setPaiement] = useState<Paiement[]>([]);
     const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [sortKey, setSortKey] = useState<keyof Paiement>("id_transaction");
+    const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 5;
 
         useEffect(() => {
         const userStr = localStorage.getItem("user");
@@ -48,6 +53,38 @@ export default function VoirPaiement() {
         saveAs(blob, fileName);
         };
 
+    const handleSort = (key: keyof Paiement) => {
+        if (sortKey === key) {
+            setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+        } else {
+            setSortKey(key);
+            setSortDirection("asc");
+        }
+        };
+    
+    const filteredPaiements = paiements.filter((p) =>
+        Object.values(p)
+            .join(" ")
+            .toLowerCase()
+            .includes(search.toLowerCase())
+        );
+
+    const sortedPaiements = [...filteredPaiements].sort((a, b) => {
+        const valA = a[sortKey];
+        const valB = b[sortKey];
+
+        if (valA < valB) return sortDirection === "asc" ? -1 : 1;
+        if (valA > valB) return sortDirection === "asc" ? 1 : -1;
+        return 0;
+        });
+
+    const totalPages = Math.ceil(sortedPaiements.length / itemsPerPage);
+
+    const paginatedPaiements = sortedPaiements.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+        );
+    
     if (loading) return (<div className="flex justify-center items-center min-h-screen font-bold text-3xl">Chargement...</div>);
     if (paiements.length === 0) return <div className="flex justify-center items-center min-h-screen font-bold text-3xl">Aucun Paiement pour le moment.</div>;
 
@@ -76,20 +113,50 @@ export default function VoirPaiement() {
          <ArrowDownTrayIcon className="h-5 w-5" />
           Expotez format Excel
         </Button>
-       <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
+       <div className="relative overflow-x-auto rounded-lg shadow-2xl border p-3">
+            <input
+                type="text"
+                placeholder="Rechercher..."
+                className="border border-b-cyan-950 p-2 rounded mb-6 w-full max-w-sm"
+                value={search}
+                onChange={(e) => {
+                    setSearch(e.target.value);
+                    setCurrentPage(1);
+                }}
+            />
             <table className="w-full text-sm text-left border-collapse">
                 <thead className="border-b hidden md:table-header-group bg-gray-100">
                 <tr>
-                    <th className="px-6 py-3 font-semibold">ID Transaction</th>
-                    <th className="px-6 py-3 font-semibold">ID Ticket</th>
-                    <th className="px-6 py-3 font-semibold">Montant</th>
-                    <th className="px-6 py-3 font-semibold">Date Paiement</th>
-                    <th className="px-6 py-3 font-semibold">Moyen Paiement</th>
-                    <th className="px-6 py-3 font-semibold">Status</th>
+                    <th
+                        className="px-6 py-3 font-semibold cursor-pointer"
+                        onClick={() => handleSort("id_transaction")}
+                        >
+                        ID Transaction
+                    </th>
+                    <th 
+                        className="px-6 py-3 font-semibold"
+                        onClick={() => handleSort("id_ticket")}>
+                        ID Ticket</th>
+                    <th 
+                        className="px-6 py-3 font-semibold"
+                        onClick={() => handleSort("montant")}
+                        >Montant</th>
+                    <th 
+                        className="px-6 py-3 font-semibold"
+                        onClick={() => handleSort("date_paiement")}
+                        >Date Paiement</th>
+                    <th 
+                        className="px-6 py-3 font-semibold"
+                        onClick={() => handleSort("moyen_paiement")}
+                        >Moyen Paiement</th>
+                    <th 
+                        className="px-6 py-3 font-semibold"
+                        onClick={() => handleSort("statut")}
+                        >Status</th>
                 </tr>
                 </thead>
                 <tbody>
-                {paiements.map((paiement) => (
+                {paginatedPaiements.map((paiement) => (
                     <tr
                     key={paiement.id_transaction}
                     className="bg-neutral-primary-soft border-b border-default hover:bg-neutral-secondary-medium md:table-row block"
@@ -123,6 +190,29 @@ export default function VoirPaiement() {
                 ))}
                 </tbody>
             </table>
+            <div className="flex justify-center gap-2 mt-6 flex-wrap">
+
+                <button
+                    className="px-3 py-1 border rounded"
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(currentPage - 1)}
+                >
+                    Précédent
+                </button>
+
+                <span className="px-3 py-1">
+                    Page {currentPage} / {totalPages}
+                </span>
+
+                <button
+                    className="px-3 py-1 border rounded"
+                    disabled={currentPage === totalPages}
+                    onClick={() => setCurrentPage(currentPage + 1)}
+                >
+                    Suivant
+                </button>
+
+            </div>
         </div>
     </div>
     </>

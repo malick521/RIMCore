@@ -58,7 +58,7 @@ const NotFound = () => {
                                Nous ne parvenons pas a trouvez la page que recherchez.
                             </h3>
                             <p className="mb-8 text-base text-body-color dark:text-dark-6">
-                                Il semble que la page n'existe pas ou a été supprimée:
+                                Il semble que la page n'existe pas ou ait été supprimée:
                             </p>
                             <Link
                                 href="/"
