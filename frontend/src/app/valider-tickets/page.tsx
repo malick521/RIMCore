@@ -50,7 +50,7 @@ export default function ValidezTicket() {
         } 
         
         catch (error) {
-            toast.error("Erreur serveur");
+            toast.error("Erreur serveur ici");
         } 
         
         finally {
@@ -80,6 +80,7 @@ export default function ValidezTicket() {
 
                 <input
                     className="w-full border border-gray-300 p-3 sm:p-4 rounded-lg text-base sm:text-lg mb-5 outline-none focus:ring-2 focus:ring-black focus:border-black transition"
+                    name="numero_ticket" 
                     type="text"
                     placeholder="Entrez le code du ticket"
                 />
