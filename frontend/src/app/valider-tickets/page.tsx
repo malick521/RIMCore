@@ -24,7 +24,7 @@ export default function ValidezTicket() {
         const formData = new FormData(e.currentTarget);
         const data = Object.fromEntries(formData.entries());
 
-        if (!data.code) {
+        if (!data.numero_ticket) {
             toast.error("Veuillez saisir un code !");
             setLoading(false);
             return;
