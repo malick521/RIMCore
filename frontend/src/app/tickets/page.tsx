@@ -57,7 +57,7 @@ export default function VoirTicket() {
     <div className="min-h-screen m-30">
 
       <h1 className="text-2xl sm:text-3xl font-bold mb-4 text-center">Historique Tickets</h1>
-      <table className="w-full text-sm text-left border-collapse">
+      <table className="w-full rounded-lg shadow-2xl text-sm text-left border-collapse">
 
         <thead className="border-b hidden md:table-header-group bg-gray-100">
           <tr>

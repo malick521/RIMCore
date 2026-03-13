@@ -124,7 +124,7 @@ export default function VoirPaiement() {
                     setCurrentPage(1);
                 }}
             />
-            <table className="w-full text-sm text-left border-collapse">
+            <table className="w-full rounded-lg shadow-2xl text-sm text-left border-collapse">
                 <thead className="border-b hidden md:table-header-group bg-gray-100">
                 <tr>
                     <th

@@ -162,7 +162,7 @@ export default function TableEmployes() {
       </Button>
 
        <div className="relative overflow-x-auto rounded-lg shadow-2xl border">
-  <table className="w-full text-sm text-left">
+  <table className="w-full rounded-lg shadow-2xl text-sm text-left">
     <thead className="border-b hidden md:table-header-group bg-gray-100">
       <tr>
         <th className="px-6 py-3">ID</th>
